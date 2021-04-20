@@ -1,0 +1,84 @@
+﻿<Window x:Class="LCRGame.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:LCRGame.ViewModels;assembly=LCRGame.ViewModels"
+        xmlns:local="clr-namespace:LCRGame"
+        mc:Ignorable="d"
+        Title="Left-Center-Right (LCR)" Height="700" Width="600" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <viewModel:PlayerViewModel x:Key="PlayerViewModel"/>
+        <viewModel:ValueConverter x:Key="valueConverter"></viewModel:ValueConverter>
+        <viewModel:BoolToVisibilityConverter x:Key="booleanConverter"></viewModel:BoolToVisibilityConverter>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <viewModel:PlayerViewModel />
+    </Window.DataContext>
+    <Grid Margin="0,0,0,10" DataContext="{Binding Source={StaticResource PlayerViewModel}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Let's Play LCR!" FontSize="30" FontWeight="ExtraBold"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="DarkSeaGreen"  />
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label x:Name="lblPlayerName" Content="Player Name" Grid.Row="0" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12, 35,0,0" Width="85"/>
+            <TextBox x:Name="txtPlayerName" Grid.Row="0" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,35,0,0" Width="135" Text="{Binding Player.PlayerName, Mode=TwoWay}"/>
+
+            <Button Content="Add Player" Grid.Row="0" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="80" Margin="250,35,0,0" Command="{Binding Path=AddPlayerCommand}"/>
+
+            <Button Content="Reset Game" Grid.Row="0" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="80" Margin="350,35,0,0" Command="{Binding Path=ResetGameCommand}"/>
+
+
+            <ListView x:Name="PlayersGrid" Grid.Row="1" Margin="10,10,10,10" ItemsSource="{Binding Players}" Width="Auto">
+                <ListView.View>
+                    <GridView x:Name="playersView">
+                        <GridViewColumn Header="Player ID" DisplayMemberBinding="{Binding PlayerId}" Width="80"/>
+                        <GridViewColumn Header="Player Name" DisplayMemberBinding="{Binding PlayerName}" Width="180"/>
+                        <GridViewColumn Header="Dices" DisplayMemberBinding="{Binding Dices}" Width="80"/>
+                        <GridViewColumn Header="Chips" DisplayMemberBinding="{Binding Chips}" Width="80"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <Label x:Name="lblCurrent" Content="Current Player:" Grid.Row="2" Height="26" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12, 7,0,0" Width="90"/>
+            <Label x:Name="lblCurrentPlayer" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="120,7,0,0" Width="150" Content="{Binding ElementName=PlayersGrid, Path=SelectedItem.PlayerName}"/>
+
+            <Button x:Name="btnRollDices" Content="Roll Dices" Grid.Row="2" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="120" Margin="250,50,0,0" 
+                    IsEnabled="{Binding Path=Text, ElementName=lblPlayerOneChips, Converter={StaticResource valueConverter}}" 
+                    Command="{Binding Path=RollDicesCommand}" CommandParameter="{Binding ElementName=PlayersGrid, Path=SelectedItem.PlayerId}"/>
+            <Label x:Name="lblP1Dice1" Content="Dice 1" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12, 47,0,0" Width="50"/>
+            <TextBox x:Name="txtP1Dice1" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="85,47,0,0" Width="50" Text="{Binding Player.DisplayDice1}"/>
+            <Label x:Name="lblP1Dice2" Content="Dice 2" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12, 87,0,0" Width="50"/>
+            <TextBox x:Name="txtP1Dice2" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="85,87,0,0" Width="50" Text="{Binding Player.DisplayDice2}"/>
+            <Label x:Name="lblP1Dice3" Content="Dice 3" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12, 127,0,0" Width="50"/>
+            <TextBox x:Name="txtP1Dice3" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="85,127,0,0" Width="50" Text="{Binding Player.DisplayDice3}"/>
+
+            <Label Content="Chips On Hand:" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,177,0,0" Width="95"/>
+            <TextBox x:Name="lblPlayerOneChips" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="115,177,0,0" Width="20" Text="{Binding ElementName=PlayersGrid, Path=SelectedItem.Chips}"/>
+
+            <Label Content="Minimum Turns" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,247,0,0" Width="95"/>
+            <TextBox x:Name="txtMinTurns" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="115,247,0,0" Width="20" Text="{Binding Player.NumberOfTurns}"/>
+
+            <Label Content="Maximum Turns:" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,277,0,0" Width="95"/>
+            <TextBox x:Name="txtMaxTurns" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="115,277,0,0" Width="20" Text="{Binding Player.NumberOfTurns}"/>
+
+            <Label Content="Average:" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,307,0,0" Width="95"/>
+            <TextBox x:Name="txtAverage" Grid.Row="2" Height="25" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="115,307,0,0" Width="20" Text="{Binding Player.NumberOfTurns}"/>
+
+            <Label Content="Game Over" Visibility="{Binding Player.GameOver, Converter={StaticResource booleanConverter}}" Grid.Row="2" FontSize="20" Height="36" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="250,378,232,-7" Width="112"/>
+
+
+        </Grid>
+    </Grid>
+
+</Window>
